@@ -13,11 +13,11 @@ Use repository
 	
 
 
-## 0. Hello AWS Lambda
+## 1. Hello AWS Lambda
 You can skip this step if you're already familiar with AWS lamba. In this step you will use a simple Java handler to create a Lambda function.
 
 
-	cd 00-hello-lambda
+	cd 01-hello-lambda
 
 	
 ### AWS Lambda functions in Java	
@@ -36,9 +36,6 @@ Add compile dependencies to your build.gradle:
 Build
 
 	gradle build
-	# generate project files 
-	# gradle idea
-	# gradle eclipse
 	
 ### Implement a function handler
 Implement a simple function handler in your *HelloLambda* class. To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-handler-types.html)
@@ -62,7 +59,8 @@ Now you package and upload your code to create your Lambda function. You will sp
 * Login to the AWS Lambda console.	
 * Choose **Create a Lambda function**
 * In step 1 **Select blueprint**, choose the **hello-world** blueprint.
-* In step 2 **Configure function** specify *Java* runtime and upload your zip. 
+* In step 2 **Configure function** specify *Java* runtime and upload your zip, select or create execution role (see below)
+* In step 3 **Create function**
 
 ### Execution and invocation permissions
 You must grant permissions for your Lambda function to access AWS resources like S3, DynamoDB or others. These are granted via an IAM role, called **execution role**. The entity invoking your Lambda function must have permission to do so. I.e. S3 or API Gateway needs permission to invoke your lambda function. See [docs](https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role) 
