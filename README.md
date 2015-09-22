@@ -17,7 +17,7 @@ Use repository
 You can skip this step if you're already familiar with AWS lamba. In this step you will use a simple Java handler to create a Lambda function.
 
 
-	cd 01-hello-lambda
+	cd 01-rps-lambda
 
 	
 ### AWS Lambda functions in Java	
@@ -38,9 +38,14 @@ Build
 	gradle build
 	
 ### Implement a function handler
-Implement a simple function handler in your *HelloLambda* class. To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-handler-types.html)
+Implement a simple function handler in your *RpsLambda* class. Lambda supports two approaches for creating a handler: 
 
-	public String myHandler(String input, Context context) {
+* Loading handler method directly without having to implement an interface
+* Implementing standard interfaces **RequestStreamHandler** or **RequestHandler**
+
+To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-handler-types.html)
+
+	public String helloWorldHandler(String input, Context context) {
     	LambdaLogger logger = context.getLogger();
 	    logger.log("received : " + input);
         return String.format("Hello %s.", input);
@@ -51,7 +56,7 @@ Implement a simple function handler in your *HelloLambda* class. To learn more a
 * Event invocation type:  asynchronous, used with event sources such as Amazon S3, Amazon Kinesis, and Amazon SNS
 
 ### Create a deployment package	
-Now you package and upload your code to create your Lambda function. You will specify the **com.jayway.lab.HelloLambda::myHandler** method reference as the handler.Your deployment package can be a **.zip** file or a standalone **.jar**. The gradle project contains a task for creating a zip:
+Now you package and upload your code to create your Lambda function. You will specify the **com.jayway.lab.RpsLambda::helloWorldHandler** method reference as the handler.Your deployment package can be a **.zip** file or a standalone **.jar**. The gradle project contains a task for creating a zip:
 
 	gradle buildZip
 
@@ -64,6 +69,55 @@ Now you package and upload your code to create your Lambda function. You will sp
 
 ### Execution and invocation permissions
 You must grant permissions for your Lambda function to access AWS resources like S3, DynamoDB or others. These are granted via an IAM role, called **execution role**. The entity invoking your Lambda function must have permission to do so. I.e. S3 or API Gateway needs permission to invoke your lambda function. See [docs](https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role) 
+
+### Test
+* Configure a sample event in the console and test your lambda function.
+
+### Create a new lambda function that consumes JSON
+Write a new lambda function **createGame** that consumes and produces JSON. Upload and test.
+
+example JSON in:
+	
+	{"name": "Player1", email: "player1@gmail.com" }
+
+example JSON out:	
+
+	{"gameid": "unique-gameid-could-be-uuid"}
+
+	
+
+## 2. Hello API Gateway
+You can skip this step if you're already familiar with AWS API Gateway. In this step, you will create a custom API and connect it to a Lambda function, and then call the Lambda function from your API.
+
+### Basic Concepts
+* REST API defined as set of **resources** and **methods** 
+* HTTP endpoints for Lambda functions and other AWS Services
+
+To learn more about API Gateway see [docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+
+### Create API
+* in AWS API Gateway console **Create API**
+* add resource **games** to your API
+* create method **POST** for this resource, choose integration type **Lambda Function** and select region and function **createGame**
+
+### Test
+* in AWS API Gateway console click **Test** and enter example request body
+* if everything works deploy your API 
+* the resulting URL will look like
+
+	https://<some-id>.execute-api.eu-west-1.amazonaws.com/<your-stage-name>
+	
+Test your endpoint with curl, i.e.
+
+	curl -X POST -H "ContentType: application/json"
+	 -d '{"name":"player1","email": "player1@gmail.com"}' 
+	 https://0fjidtcksb.execute-api.eu-west-1.amazonaws.com/rpsDevStage/games
+
+	
+
+
+
+
 
 	
 
