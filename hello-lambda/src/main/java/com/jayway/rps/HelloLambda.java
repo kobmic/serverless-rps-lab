@@ -6,5 +6,5 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 public class HelloLambda {
 
    // your code goes here
-    
+
 }
