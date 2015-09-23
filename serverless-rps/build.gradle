@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+version = '0.1.0-SNAPSHOT'
+
+repositories { 
+  mavenCentral()
+}
+
+dependencies {
+  compile (
+          'com.amazonaws:aws-lambda-java-core:1.0.0',
+          'com.amazonaws:aws-lambda-java-events:1.0.0',
+          'com.amazonaws:aws-java-sdk:1.10.20'
+  )
+  testCompile "junit:junit:4.11"
+}
+
+task buildZip(type: Zip) {
+  from compileJava
+  from processResources
+  into('lib') {
+    from configurations.runtime
+  }
+}
