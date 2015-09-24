@@ -88,11 +88,17 @@ example JSON out:
 	
 
 ## 3. Hello API Gateway
-You can skip this step if you're already familiar with AWS API Gateway. In this step, you will create a custom API and connect it to a Lambda function, and then call the Lambda function from your API.
+You can skip this step if you're already familiar with AWS API Gateway. In this step, you will see how to use API Gateway to create a custom API, connect your custom API to a AWS Lambda function, and then call the Lambda function from a client through API Gateway.
 
 ### Basic Concepts
 * REST API defined as set of **resources** and **methods** 
-* HTTP endpoints for Lambda functions and other AWS Services
+* HTTP(s) endpoints for Lambda functions and other AWS Services
+* For every resource specify one or more methods to invoke it
+* Integration types:
+	* Lambda Function 	
+	* HTTP Proxy
+	* Mock Integration
+	* AWS Sevice Proxy
 
 To learn more about API Gateway see [docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
 
@@ -106,7 +112,7 @@ To learn more about API Gateway see [docs](http://docs.aws.amazon.com/apigateway
 * if everything works deploy your API 
 * the resulting URL will look like
 
-	https://<some-id>.execute-api.eu-west-1.amazonaws.com/<your-stage-name>
+	https://0fjidtcksb.execute-api.eu-west-1.amazonaws.com/your-stage-name
 	
 Test your endpoint with curl, i.e.
 
@@ -126,6 +132,9 @@ In this step you will implement the rock-paper-scissors game using API Gateway &
 
 ### Architecture
 ![Architecture](./architecture.png)
+
+### Game states
+![game states](./game-states.png)
 
 ### Create Game
 
