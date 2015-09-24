@@ -124,6 +124,9 @@ In this step you will implement the rock-paper-scissors game using API Gateway &
         "Resource": "arn:aws:dynamodb:eu-west-1:554360467205:table/rpslab-games"
     } 
 
+### Architecture
+![Architecture](./architecture.png)
+
 ### Create Game
 
 * Write a lambda function that creates a new game, use **com.jayway.rps.infra.GameStore** utility class to store the new game in DynamoDB. You'll find a project template in directory **serverless-rps**.
