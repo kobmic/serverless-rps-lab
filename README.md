@@ -238,14 +238,14 @@ Json out:
 Json in:
 
 	{
-  		"state": "",
-  		"email": "player1@gmail.com"
+  		"state": "created",
 	}
 
 
 
 
-	
+## Implement Highscore 
+If you still want to code more you could implement a highscore feature for the rps game. Checkout the 'dynamo-process-stream' blueprint in AWS Lmabda. It's an DynamoDB trigger that logs updates to a table. Implement a lambda function that gets the updates, and when receiving an update for a game that's ended, update a **highscore** collection, i.e, "player, wins, losts, ties".
 
 
 
