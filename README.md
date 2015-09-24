@@ -44,6 +44,9 @@ Implement a simple function handler in your *HelloLambda* class. Lambda supports
 * Loading handler method directly without having to implement an interface
 * Implementing standard interfaces **RequestStreamHandler** or **RequestHandler**
 
+First parameter of the handler function is **input**, second parameter the **context**.
+Supported input/output types for a handler are: simple Java types (String, Integer, Boolean, Map, and List types) or POJO or Stream type. AWS Lambda serializes based on standard bean naming conventions (use mutable POJOs with public getters and setters).
+
 To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-handler-types.html)
 
 	public String helloWorld(String input, Context context) {
@@ -231,6 +234,13 @@ Json out:
 
 
 
+### Get Games
+Json in:
+
+	{
+  		"state": "",
+  		"email": "player1@gmail.com"
+	}
 
 
 
