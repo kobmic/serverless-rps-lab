@@ -11,6 +11,8 @@ Use repository
 	git clone git@github.com:kobmic/serverless-rps-lab.git
 	cd serverless-rps-lab
 	
+If you get stuck you can check the branch **solution**.	
+	
 ## 0. Naming
 When doing this lab in teams, to avoid name conflicts choose a team name and use it when naming lambda functions etc, i.e. "awesomeTeam-helloWorld" instead of "helloWorld" 
 
