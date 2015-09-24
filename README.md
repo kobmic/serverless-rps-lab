@@ -304,8 +304,9 @@ If you still want to code, here are some ideas.
 Implement a highscore feature for the rps game. Checkout the 'dynamo-process-stream' blueprint in AWS Lmabda. It's an DynamoDB trigger that logs updates to a table. Implement a lambda function that gets the updates, and when receiving an update for a game that's ended, update a **highscore** collection, i.e, "player, wins, losts, ties".
 
 ### Upload player image
-Upload player image to s3, write a lambda function that listens to **s3:ObjectCreated:*** events, scale the upload image and displays it in the highscore list.
+Upload player image to s3, write a lambda function that listens to **s3:ObjectCreated:*** events, scale the upload image and displays it in the highscore list. See [AWS Lambda Walkthrough 1: Process S3 Events (Java)](http://docs.aws.amazon.com/lambda/latest/dg/java-wt-s3-log-event-data.html)
 
- 
+### Use API Gateway as Service Proxy to DynamoDB 
+Instead of using AWS Lambda, try to use API Gateway as service proxy to DynamoDB. Check [Making HTTP Requests to DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/MakingHTTPRequests.html) and [Walkthrough: API Gateway and an AWS Service Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-aws-proxy.html)
  
 
