@@ -4,12 +4,15 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.jayway.rps.domain.Game;
 import com.jayway.rps.domain.PlayerMove;
+
+import java.util.*;
 
 /**
  * Utility class for storing game state in DynamoDB.
@@ -134,6 +137,30 @@ public class GameStore {
         Table table = GameStore.createConnectionAndGetTable();
         Item item = table.getItem("gameId", gameId);
         return itemToGame(item);
+    }
+
+    /**
+     * Get games by state. Return max 20 results.
+     * @param state
+     * @return
+     */
+    public static List<Game> getGames(String state) {
+        Table table = GameStore.createConnectionAndGetTable();
+
+        List<Game> games = new ArrayList<>();
+
+        ScanSpec spec = new ScanSpec()
+                .withFilterExpression("state = :st")
+                .withNameMap(new NameMap().with("#st", "state"))
+                .withMaxResultSize(20);
+
+        ItemCollection<ScanOutcome> items = table.scan(spec);
+
+        Iterator<Item> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            games.add(GameStore.itemToGame(iterator.next()));
+        }
+        return games;
     }
 
     public static Game itemToGame(Item item) {
