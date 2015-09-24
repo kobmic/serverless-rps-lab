@@ -44,6 +44,9 @@ Implement a simple function handler in your *HelloLambda* class. Lambda supports
 * Loading handler method directly without having to implement an interface
 * Implementing standard interfaces **RequestStreamHandler** or **RequestHandler**
 
+First parameter of the handler function is **input**, second parameter the **context**.
+Supported input/output types for a handler are: simple Java types (String, Integer, Boolean, Map, and List types) or POJO or Stream type. AWS Lambda serializes based on standard bean naming conventions (use mutable POJOs with public getters and setters).
+
 To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lambda/latest/dg/java-programming-model-handler-types.html)
 
 	public String helloWorld(String input, Context context) {
@@ -107,6 +110,10 @@ To learn more about API Gateway see [docs](http://docs.aws.amazon.com/apigateway
 * add resource **games** to your API
 * create method **POST** for this resource, choose integration type **Lambda Function** and select region and function **createGame**
 
+### Models and Mapping 
+In API Gateway, you use models and mapping templatesto transform data from one schema to another. API Gateway uses the Velocity Template Language (VTL) and JSONPath expressions to define mapping templates. To learn more about models and mapping see [docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings)
+
+
 ### Test
 * in AWS API Gateway console click **Test** and enter example request body
 * if everything works deploy your API 
@@ -154,37 +161,11 @@ Json out:
 
 * reuse your API Gateway from above, or create a new one, as before you'll need a **games** resource with method **POST** that will use your lambda function **createGame**
 * test your API and make sure the new game is persisted in DynamoDB table **rpslab-games**
-
-### Join Game
-
-* Implement **JoinGameLambda** 
-* add resource **games/{gameId}** with method **PUT**
-
-
-
-Json in:
-
-	{
-  		"gameId": "c89dc950-141e-46ea-9f99-b1f54fb9c46d",
-		"email": "player2@gmail.com"
-	}
-	
-Json out:
-
-	{
-		"gameId": "c89dc950-141e-46ea-9f99-b1f54fb9c46d",
-  		"state": "ready",
-  		"player1": "player1@gmail.com",
-		"player2": "player2@gmail.com"
-	}	
-
-
+* change message repsonse from 200 to 201
 
 ### Get Game
 
 * Implement **GetGameLambda** 
-* add method **GET** to resource **games/{gameId}** 
-
 
 Json in:
 
@@ -203,14 +184,51 @@ Json out:
 		"player2Move": "rock",
 		"winner": "tie""
 	}	
+	
+* add method **GET** to resource **games/{gameid}** 
+* add a mapping to map the path parameter {gameid} to Json
+	* in resource view select your new **GET** method
+	* choose integration request
+	* add mapping template 'application/json' 
+	* add template: <code>{ "gameId" : "$input.params('gameid')" } </code>
+	
+
+### Join Game
+
+* Implement **JoinGameLambda** 
+
+Json in:
+
+	{
+  		"gameId": "c89dc950-141e-46ea-9f99-b1f54fb9c46d",
+		"email": "player2@gmail.com"
+	}
+	
+Json out:
+
+	{
+		"gameId": "c89dc950-141e-46ea-9f99-b1f54fb9c46d",
+  		"state": "ready",
+  		"player1": "player1@gmail.com",
+		"player2": "player2@gmail.com"
+	}	
+
+
+* add resource **games/{gameid}** with method **PUT**
+
+Mapping for {gameid} and add back remaining JSON properties in request body:
+	
+	#set($inputRoot = $input.path('$'))
+	{ 
+  		"gameId" : "$input.params('gameid')",
+  		"email": "$inputRoot.email"
+	}
 
 
 
 ### Make Move
 
 * Implement **MakeMoveLambda** 
-* add method **POST** to resource **games/{gameId}** 
-
 
 Json in:
 
@@ -229,16 +247,65 @@ Json out:
 		"player1Move": "rock",
 	}	
 
+* add method **POST** to resource **games/{gameid}** 
 
-
-
-
-
-
+Mapping for {gameid} and add back remaining JSON properties in request body:
 	
+	#set($inputRoot = $input.path('$'))
+	{ 
+  		"gameId" : "$input.params('gameid')",
+  		"email": "$inputRoot.email",
+  		"move": "$inputRoot.move"
+	}
 
 
 
+### Get Games
 
+* Implement **MakeMoveLambda** 
+
+Json in:
+
+	{
+  		"state": "created"
+	}
+	
+Json out:
+
+	[
+  	  {
+    	"gameId": "a6e1efd2-952d-4ea2-982a-663a12ac3a24",
+	    "state": "created",
+    	"player1": "mike@gmail.com"
+	  },
+  	  {
+    	"gameId": "b5c9be16-5633-40ae-950c-a8b33a171d48",
+    	"state": "created",
+    	"player1": "mike@gmail.com"
+  	  }
+    ]	
+
+* add method **GET** to resource **games**
+* use a query parameter *state* to query games by state, i.e. <code>/games?state=ended</code>
+
+Mapping for query parameter *state*:
+	
+	{ 
+  		"state" : "$input.params('state')"
+  	}
+
+### Test
+Test your API with curl.
+
+## Where to go from here
+If you still want to code more here are some ideas.
+
+### Implement highscore
+Implement a highscore feature for the rps game. Checkout the 'dynamo-process-stream' blueprint in AWS Lmabda. It's an DynamoDB trigger that logs updates to a table. Implement a lambda function that gets the updates, and when receiving an update for a game that's ended, update a **highscore** collection, i.e, "player, wins, losts, ties".
+
+### Upload player image
+Upload player image to s3, write a lambda function that listens to **s3:ObjectCreated:*** events, scale the upload image and displays it in the highscore list.
+
+ 
  
 

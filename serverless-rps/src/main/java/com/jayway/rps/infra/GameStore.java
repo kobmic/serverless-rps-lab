@@ -147,11 +147,15 @@ public class GameStore {
     public static List<Game> getGames(String state) {
         Table table = GameStore.createConnectionAndGetTable();
 
-        List<Game> games = new ArrayList<>();
+        // default: created games waiting for player to join
+        String gameState = ((state == null) || (state.length() == 0)) ? "created" : state;
+
+        List<Game> games = new ArrayList<Game>();
 
         ScanSpec spec = new ScanSpec()
-                .withFilterExpression("state = :st")
+                .withFilterExpression("#st = :val1")
                 .withNameMap(new NameMap().with("#st", "state"))
+                .withValueMap(new ValueMap().with(":val1", gameState))
                 .withMaxResultSize(20);
 
         ItemCollection<ScanOutcome> items = table.scan(spec);
