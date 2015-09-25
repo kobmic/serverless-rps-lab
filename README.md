@@ -77,7 +77,14 @@ Now you package and upload your code to create your Lambda function. You will sp
 You must grant permissions for your Lambda function to access AWS resources like S3, DynamoDB or others. These are granted via an IAM role, called **execution role**. The entity invoking your Lambda function must have permission to do so. I.e. S3 or API Gateway needs permission to invoke your lambda function. See [docs](https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role) 
 
 ### Test
-* Configure a sample event in the console and test your lambda function.
+Configure a sample event in the console and test your lambda function.
+
+### Troubleshooting and monitoring
+AWS Lambda automatically monitors Lambda functions, reporting metrics through Amazon CloudWatch. You can insert logging statements into your code that will be pushed to a CloudWatch Logs group associated with your Lambda function (Lambda/<function name>). In Java use the **LambdaLogger**:
+
+	LambdaLogger logger = context.getLogger();
+    logger.log("some useful log");
+
 
 ## 2. Create a lambda function that consumes JSON
 Write a new lambda function **createGame** that consumes and produces JSON. Upload and test.
