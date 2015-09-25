@@ -68,8 +68,9 @@ public class GameStore {
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                 .withPrimaryKey("gameId", gameId)
                 .withUpdateExpression("set #p2 = :val1, #st = :val2")
+                .withConditionExpression("#st = :val3")
                 .withNameMap(new NameMap().with("#p2", "player2").with("#st", "state"))
-                .withValueMap(new ValueMap().withString(":val1", player2).withString(":val2", "ready"))
+                .withValueMap(new ValueMap().withString(":val1", player2).withString(":val2", "ready").withString(":val3", "created"))
                 .withReturnValues(ReturnValue.ALL_NEW);
 
         UpdateItemOutcome outcome =  table.updateItem(updateItemSpec);
