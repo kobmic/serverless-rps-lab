@@ -11,6 +11,8 @@ Use repository
 	git clone git@github.com:kobmic/serverless-rps-lab.git
 	cd serverless-rps-lab
 	
+If you get stuck you can check the branch **solution**.	
+	
 ## 0. Naming
 When doing this lab in teams, to avoid name conflicts choose a team name and use it when naming lambda functions etc, i.e. "awesomeTeam-helloWorld" instead of "helloWorld" 
 
@@ -75,7 +77,14 @@ Now you package and upload your code to create your Lambda function. You will sp
 You must grant permissions for your Lambda function to access AWS resources like S3, DynamoDB or others. These are granted via an IAM role, called **execution role**. The entity invoking your Lambda function must have permission to do so. I.e. S3 or API Gateway needs permission to invoke your lambda function. See [docs](https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role) 
 
 ### Test
-* Configure a sample event in the console and test your lambda function.
+Configure a sample event in the console and test your lambda function.
+
+### Troubleshooting and monitoring
+AWS Lambda automatically monitors Lambda functions, reporting metrics through Amazon CloudWatch. You can insert logging statements into your code that will be pushed to a CloudWatch Logs group associated with your Lambda function (Lambda/<function name>). In Java use the **LambdaLogger**:
+
+	LambdaLogger logger = context.getLogger();
+    logger.log("some useful log");
+
 
 ## 2. Create a lambda function that consumes JSON
 Write a new lambda function **createGame** that consumes and produces JSON. Upload and test.
@@ -262,7 +271,7 @@ Mapping for {gameid} and add back remaining JSON properties in request body:
 
 ### Get Games
 
-* Implement **MakeMoveLambda** 
+* Implement **MakeMoveLambda**
 
 Json in:
 
@@ -298,14 +307,15 @@ Mapping for query parameter *state*:
 Test your API with curl.
 
 ## Where to go from here
-If you still want to code more here are some ideas.
+If you still want to code, here are some ideas.
 
 ### Implement highscore
 Implement a highscore feature for the rps game. Checkout the 'dynamo-process-stream' blueprint in AWS Lmabda. It's an DynamoDB trigger that logs updates to a table. Implement a lambda function that gets the updates, and when receiving an update for a game that's ended, update a **highscore** collection, i.e, "player, wins, losts, ties".
 
 ### Upload player image
-Upload player image to s3, write a lambda function that listens to **s3:ObjectCreated:*** events, scale the upload image and displays it in the highscore list.
+Upload player image to s3, write a lambda function that listens to **s3:ObjectCreated:*** events, scale the upload image and displays it in the highscore list. See [AWS Lambda Walkthrough 1: Process S3 Events (Java)](http://docs.aws.amazon.com/lambda/latest/dg/java-wt-s3-log-event-data.html)
 
- 
+### Use API Gateway as Service Proxy to DynamoDB 
+Instead of using AWS Lambda, try to use API Gateway as service proxy to DynamoDB. Check [Making HTTP Requests to DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/MakingHTTPRequests.html) and [Walkthrough: API Gateway and an AWS Service Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-aws-proxy.html)
  
 
