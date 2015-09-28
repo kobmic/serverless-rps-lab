@@ -272,7 +272,7 @@ Mapping for {gameid} and add back remaining JSON properties in request body:
 
 ### Get Games
 
-* Implement **MakeMoveLambda**
+* Implement **GetGamesLambda**
 
 Json in:
 
