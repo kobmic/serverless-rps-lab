@@ -243,7 +243,8 @@ Json in:
 
 	{
   		"gameId": "c89dc950-141e-46ea-9f99-b1f54fb9c46d",
-  		"email": "player1@gmail.com"
+  		"email": "player1@gmail.com",
+  		"move": "rock"
 	}
 	
 Json out:
