@@ -48,7 +48,6 @@
     (condp = player
           player1 (cond (and (nil? player1Move) (nil? player2Move)) [:waiting :player1Move]
                     player2Move [:ended :player1Move]) 
-          
           player2 (cond (and (nil? player1Move) (nil? player2Move)) [:waiting :player2Move]
                     player1Move [:ended :player2Move]))))
 
@@ -56,8 +55,7 @@
   (let [current-game (get-game game-id)]
     (if (= "ended" (:state current-game))
       current-game
-      (let [[new-state field-to-update] (decide-state-field player current-game)
-            _ (println new-state field-to-update)]
+      (let [[new-state field-to-update] (decide-state-field player current-game)]
         (if field-to-update
           (update-winner
             (far/update-item *client-opts*
