@@ -6,15 +6,15 @@ A Clojure library designed to provide Lambda implementations for Rock-Paper-Scis
 
 ### Create lambda functions
 
-    ./create.sh
+    etc/create.sh
     
 ### Update code for lambda functions
 
-    ./build.sh
+    etc/build.sh
     
 ### Delete lambda functions
 
-    ./cleanup.sh
+    etc/cleanup.sh
     
 ### Invoking functions
 
