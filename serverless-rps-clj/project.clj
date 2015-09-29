@@ -6,13 +6,6 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.json "0.2.6"]
                  [com.amazonaws/aws-lambda-java-core "1.0.0"]
-                 [amazonica "0.3.33"
-                  :exclusions [com.amazonaws/aws-java-sdk
-                               com.amazonaws/amazon-kinesis-client]]
-                 [com.amazonaws/aws-java-sdk-core "1.10.12"]
-                 [com.amazonaws/aws-java-sdk-dynamodb "1.10.12"]
-                 [com.amazonaws/aws-java-sdk-lambda "1.10.12"]
-                 ;; stupid, but it's needed in load-time
-                 [com.amazonaws/aws-java-sdk-cloudsearch "1.10.12"]]
-  :java-source-paths ["src-java"]
+                 [com.taoensso/faraday "1.8.0"]
+                 [com.amazonaws/aws-java-sdk-dynamodb "1.10.20"]]
   :aot :all)
