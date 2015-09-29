@@ -13,7 +13,7 @@ function camelcase () {
     echo $1|perl -pe 's/[^-]+/\u$&/g;' -pe 's/-//g;'
 }
 
-for f in $functions; do
+time for f in $functions; do
     function_name="${PREFIX}-$f"
     aws --profile=jayway-devops-ulrik lambda create-function \
         --function-name $function_name \
