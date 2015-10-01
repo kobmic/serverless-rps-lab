@@ -310,6 +310,9 @@ Test your API with curl.
 ## Where to go from here
 If you still want to code, here are some ideas.
 
+### Error Handling
+The current code template didn't include any error handling. Improve the code and map errors to HTTP status code in the API Gateway.
+
 ### Implement highscore
 Implement a highscore feature for the rps game. Checkout the 'dynamo-process-stream' blueprint in AWS Lmabda. It's an DynamoDB trigger that logs updates to a table. Implement a lambda function that gets the updates, and when receiving an update for a game that's ended, update a **highscore** collection, i.e, "player, wins, losts, ties".
 
