@@ -2,8 +2,7 @@
   (:require [clojure.data.json :as json]
             [clojure.string :as s]
             [clojure.java.io :as io]
-            [serverless-rps-clj.game-store :as game-store])
-  (:import (java.util UUID)))
+            [serverless-rps-clj.game-store :as game-store]))
 
 (defn key->keyword [key-string]
   (-> key-string
@@ -22,27 +21,7 @@
 
 ;; convenience macro for generating gen-class and handleRequest
 
-(defmacro deflambda
-  "Event handler that you write:
-  
-    (defn handle-create-game-event [event]
-      (prn event)
-      (game-store/create-game (str (UUID/randomUUID)) (:email event)))
-  
-  Then add a call to deflambda:
-  
-    (deflambda create-game)
-  
-  The deflambda macro generates this code:
-  
-    (gen-class
-      :name CreateGame
-      :prefix CreateGame-
-      :implements [com.amazonaws.services.lambda.runtime.RequestStreamHandler])
-    
-    (defn CreateGame-handleRequest [this is os context]
-      (handleRequest this is os context handle-create-game-event))"
-  [name]
+(defmacro deflambda [name args & body]
   (let [class-name (->> (clojure.string/split (str name) #"-")
                      (mapcat clojure.string/capitalize)
                      (apply str))]
@@ -51,45 +30,33 @@
            :prefix ~(symbol (str class-name "-"))
            :implements [com.amazonaws.services.lambda.runtime.RequestStreamHandler])
 
-         (defn ~(symbol (str class-name "-handleRequest")) [this# is# os# context#]
-           (handleRequest this# is# os# context# ~(symbol (str "handle-" name "-event")))))))
+         (defn ~(symbol (str "handle-" name "-event")) ~args
+           ~@body)
+         
+         (defn ~(symbol (str class-name "-handleRequest")) ~'[this is os context]
+           (handleRequest ~'this ~'is ~'os ~'context ~(symbol (str "handle-" name "-event")))))))
 
 ;; Create Game
 
-(defn handle-create-game-event [event]
-  (prn event)
-  (game-store/create-game (str (UUID/randomUUID)) (:email event)))
-
-(deflambda create-game)
+(deflambda create-game [event]
+  (game-store/create-game (str (java.util.UUID/randomUUID)) (:email event)))
 
 ;; Get Game
 
-(defn handle-get-game-event [event]
-  (prn event)
+(deflambda get-game [event]
   (game-store/get-game (:game-id event)))
-
-(deflambda get-game)
 
 ;; Get Games
 
-(defn handle-get-games-event [event]
-  (prn event)
+(deflambda get-games [event]
   (game-store/get-games (:state event)))
-
-(deflambda get-games)
 
 ;; Join Game
 
-(defn handle-join-game-event [{:keys [game-id email] :as event}]
-  (prn event)
+(deflambda join-game [{:keys [game-id email] :as event}]
   (game-store/join-game game-id email))
-
-(deflambda join-game)
 
 ;; Make Move
 
-(defn handle-make-move-event [{:keys [game-id email move] :as event}]
-  (prn event)
+(deflambda make-move [{:keys [game-id email move] :as event}]
   (game-store/make-move game-id email move))
-
-(deflambda make-move)
