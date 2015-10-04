@@ -12,11 +12,16 @@ A Clojure library designed to provide Lambda implementations for Rock-Paper-Scis
 
     etc/build.sh
     
+### Test either lambda functions or API
+
+    etc/test-api.sh lambda
+    etc/test-api.sh api
+    
 ### Delete lambda functions
 
     etc/cleanup.sh
     
-### Invoking functions
+### Invoking lambda functions
 
 #### Create Game
 
@@ -89,7 +94,10 @@ A Clojure library designed to provide Lambda implementations for Rock-Paper-Scis
 
 #### Get Game
 
-    $ aws --profile=jayway-devops-ulrik lambda invoke         --function-name ulsa-get-game         --payload '{"gameId":"e593db97-9ede-4f40-bb4e-dc81c8a5ab1c"}'         /tmp/lambda_result && jq . /tmp/lambda_result 
+    $ aws --profile=jayway-devops-ulrik lambda invoke \
+        --function-name ulsa-get-game \
+        --payload '{"gameId":"e593db97-9ede-4f40-bb4e-dc81c8a5ab1c"}' \
+        /tmp/lambda_result && jq . /tmp/lambda_result 
     {
         "StatusCode": 200
     }
