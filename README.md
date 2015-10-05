@@ -307,41 +307,49 @@ Mapping for query parameter *state*:
 ### Test
 Test your API with curl, or use Ulriks script:
 
-Usage
+#### Usage
 
 	$ cd serverless-rps
 	$ etc/test-api.sh --help
 	Usage: test-api.sh --profile=<profile> --prefix=<prefix>
-        --api-id=<api id> --stage=<stage>
-        [--test={api|lambda}] [--region=<region>]
-        [--player1=<email>] [--player2=<email>]
-        [--debug] [--help]
+            --api-id=<api id> --stage=<stage>
+            [--test={api|lambda}] [--region=<region>]
+            [--player1=<email>] [--player2=<email>]
+            [--camelCase] [--debug] [--help]
+    
+    where:
+      profile     aws-cli profile, eg 'jayway-devops-mike'
+      prefix      lambda function prefix, eg 'mike' if lambda is 'mike-get-game'
+      api-id      id of the Amazon API Gateway API, eg '5ikia5f4v9'
+      stage       name of API Gateway stage, eg 'mike_rps'
+      test        what to test, {api|lambda} (default: api)
+      region      name of AWS region (default: eu-west-1)
+      player1     email of player1 (default: daphne@example.com)
+      player2     email of player2 (default: scooby@example.com)
+      camel-case  expect 'mike-createGame' lambda names (default: 'mike-create-game')
+    
+    If your Lambda functions are not dash-separated lower-case prefixed names,
+    like 'mike-create-game', 'mike-join-game', 'mike-make-move', 'mike-get-game',
+    and 'mike-get-games', but rather 'mike-createGame', 'mike-joinGame',
+    'mike-makeMove', 'mike-getGame', and 'mike-getGames', then you must use the
+    flag '--camel-case'. If they have a naming-convention different than those two,
+    you're on your own.
 
-	where:
-  	profile     aws-cli profile, eg 'jayway-devops-mike'
-	prefix      lambda function prefix, eg 'mike' if lambda is 'mike-get-game'
-  	api-id      id of the Amazon API Gateway API, eg '5ikia5f4v9'
-  	stage       name of API Gateway stage, eg 'mike_rps'
-  	test        what to test, {api|lambda} (default: api)
-  	region      name of AWS region (default: eu-west-1)
-  	player1     email of player1 (default: daphne@example.com)
-  	player2     email of player2 (default: scooby@example.com)
+**Lambda**
 
-Lambda functions are expected to have dash-separated lower-case prefixed names,
-like 'mike-create-game', 'mike-join-game', 'mike-make-move', 'mike-get-game',
-and 'mike-get-games'.
+Use the parameter `--test=lambda` to test all the Lambda functions:
 
-Lambda
-	
-	$ etc/test-api.sh --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --	stage=ulsa_rps --test=lambda
+	$ etc/test-api.sh --test=lambda --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --stage=ulsa_rps
 	Testing the AWS Lambda functions
 	...
 
-Api Gateway
+**API Gateway**
 	
-	$ etc/test-api.sh --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --	stage=ulsa_rps --test=api
+Use the parameter `--test=api` to test all the API resources and methods:
 
-	Testing the Amazon API Gateway API; URL is: https://5ikia5f4v9.execute-api.eu-west-1.amazonaws.com/ulsa_rps/games
+	$ etc/test-api.sh --test=api --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --stage=ulsa_rps
+
+	Testing the Amazon API Gateway API on https://5ikia5f4v9.execute-api.eu-west-1.amazonaws.com/ulsa_rps/games
 	Result files will be located in /var/folders/gc/0skht0rj5nv53jzc5srk0ng80000gn/T/serverless-rps.Lw1V9oQ8
 
 	Testing create game...
@@ -364,8 +372,16 @@ Api Gateway
 
 	Tests are done
 
+The first API Gateway calls on cold instances often result in a timeout. As you
+can see above, the test script handles retries in those cases (max 5).
+
+The created game is not cleaned up, so you might want to:
+
+* set `--player1` and/or `--player2` to something you recognize
+* manually delete the games created by your tests from the DynamoDB console
+
 ## Where to go from here
-If you still want to code, here are some ideas.
+If you want to code some more, here are some ideas.
 
 ### Error Handling
 The current code template didn't include any error handling. Improve the code and map errors to HTTP status code in the API Gateway.

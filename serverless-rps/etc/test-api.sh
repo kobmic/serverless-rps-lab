@@ -9,7 +9,7 @@ usage="Usage: $prg --profile=<profile> --prefix=<prefix>
         --api-id=<api id> --stage=<stage>
         [--test={api|lambda}] [--region=<region>]
         [--player1=<email>] [--player2=<email>]
-        [--debug] [--help]
+        [--camelCase] [--debug] [--help]
 
 where:
   profile     aws-cli profile, eg 'jayway-devops-mike'
@@ -20,10 +20,14 @@ where:
   region      name of AWS region (default: eu-west-1)
   player1     email of player1 (default: daphne@example.com)
   player2     email of player2 (default: scooby@example.com)
+  camel-case  expect 'mike-createGame' lambda names (default: 'mike-create-game')
 
-Lambda functions are expected to have dash-separated lower-case prefixed names,
+If your Lambda functions are not dash-separated lower-case prefixed names,
 like 'mike-create-game', 'mike-join-game', 'mike-make-move', 'mike-get-game',
-and 'mike-get-games'."
+and 'mike-get-games', but rather 'mike-createGame', 'mike-joinGame',
+'mike-makeMove', 'mike-getGame', and 'mike-getGames', then you must use the
+flag '--camel-case'. If they have a naming-convention different than those two,
+you're on your own."
 
 profile=
 prefix=
@@ -33,6 +37,7 @@ test="api"
 region="eu-west-1"
 player1="daphne@example.com"
 player2="scooby@example.com"
+camel_case="n"
 
 headers="-H 'Content-Type: application/json'"
 
@@ -51,6 +56,7 @@ while getopts ':-' 'OPTION' ; do
             --region )     region=$OPTARG;;
             --player1 )    player1=$OPTARG;;
             --player2 )    player2=$OPTARG;;
+            --camel-case ) camel_case="y";;
             --debug )      set -x;;
             --help )       echo "$usage" ; exit 0;;
             * ) echo "Error: Unsupported argument '$OPTION'.
@@ -97,7 +103,7 @@ api_url="https://$api_id.execute-api.$region.amazonaws.com/$stage/games"
 if [ "$test" = "lambda" ]; then
     echo "Testing the AWS Lambda functions"
 elif [ "$test" = "api" ]; then
-    echo "Testing the Amazon API Gateway API; URL is: $api_url"
+    echo "Testing the Amazon API Gateway API on $api_url"
 else
     echo "Error: expected {api|lambda}, got $test
 
@@ -112,11 +118,15 @@ echo "Result files will be located in $logdir"
 echo; echo "Testing create game..."
 
 file=$logdir/create-game
+fn="create-game"
+if [ "$camel_case" = "y" ]; then
+    fn="createGame"
+fi
 
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-create-game \
+        --function-name ${prefix}-$fn \
         --payload "{\"email\":\"$player1\"}" \
         $file > $out
     
@@ -161,10 +171,15 @@ echo "Player1 ($player1) created game $gameId"
 echo; echo "Testing join game..."
 
 file=$logdir/join-game
+fn="join-game"
+if [ "$camel_case" = "y" ]; then
+    fn="joinGame"
+fi
+
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-join-game \
+        --function-name ${prefix}-$fn \
         --payload "{\"gameId\":\"$gameId\", \"email\": \"$player2\"}" \
         $file > $out
     statusCode=$(jq -r .StatusCode $out)
@@ -206,10 +221,15 @@ moves=("rock" "paper" "scissors")
 player1_move=${moves[$RANDOM % ${#moves[@]}]}
 
 file=$logdir/first-move
+fn="make-move"
+if [ "$camel_case" = "y" ]; then
+    fn="makeMove"
+fi
+
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-make-move \
+        --function-name ${prefix}-$fn \
         --payload "{\"gameId\":\"$gameId\", \
                     \"email\": \"$player1\", \"move\":\"$player1_move\"}" \
         $file > $out
@@ -248,11 +268,16 @@ echo "Player1 ($player1) played: $player1Move"
 # second move
 
 file=$logdir/second-move
+fn="make-move"
+if [ "$camel_case" = "y" ]; then
+    fn="makeMove"
+fi
+
 player2_move=${moves[$RANDOM % ${#moves[@]}]}
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-make-move \
+        --function-name ${prefix}-$fn \
         --payload "{\"gameId\":\"$gameId\", \
                     \"email\": \"$player2\", \"move\":\"$player2_move\"}" \
         $file > $out
@@ -299,10 +324,15 @@ fi
 echo; echo "Testing get game..."
 
 file=$logdir/get-game
+fn="get-game"
+if [ "$camel_case" = "y" ]; then
+    fn="getGame"
+fi
+
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-get-game \
+        --function-name ${prefix}-$fn \
         --payload "{\"gameId\":\"$gameId\"}" \
         $file > $out
     statusCode=$(jq -r .StatusCode $out)
@@ -357,10 +387,15 @@ state="ended"
 echo; echo "Testing get games (with state=$state)..."
 
 file=$logdir/get-games
+fn="get-games"
+if [ "$camel_case" = "y" ]; then
+    fn="getGames"
+fi
+
 if [ "$test" = "lambda" ]; then
     out=$file.out
     aws --profile=$profile lambda invoke \
-        --function-name ${prefix}-get-games \
+        --function-name ${prefix}-$fn \
         --payload "{\"state\":\"$state\"}" \
         $file > $out
     statusCode=$(jq -r .StatusCode $out)
