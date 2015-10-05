@@ -305,7 +305,64 @@ Mapping for query parameter *state*:
   	}
 
 ### Test
-Test your API with curl.
+Test your API with curl, or use Ulriks script:
+
+Usage
+
+	$ cd serverless-rps
+	$ etc/test-api.sh --help
+	Usage: test-api.sh --profile=<profile> --prefix=<prefix>
+        --api-id=<api id> --stage=<stage>
+        [--test={api|lambda}] [--region=<region>]
+        [--player1=<email>] [--player2=<email>]
+        [--debug] [--help]
+
+	where:
+  	profile     aws-cli profile, eg 'jayway-devops-mike'
+	prefix      lambda function prefix, eg 'mike' if lambda is 'mike-get-game'
+  	api-id      id of the Amazon API Gateway API, eg '5ikia5f4v9'
+  	stage       name of API Gateway stage, eg 'mike_rps'
+  	test        what to test, {api|lambda} (default: api)
+  	region      name of AWS region (default: eu-west-1)
+  	player1     email of player1 (default: daphne@example.com)
+  	player2     email of player2 (default: scooby@example.com)
+
+Lambda functions are expected to have dash-separated lower-case prefixed names,
+like 'mike-create-game', 'mike-join-game', 'mike-make-move', 'mike-get-game',
+and 'mike-get-games'.
+
+Lambda
+	
+	$ etc/test-api.sh --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --	stage=ulsa_rps --test=lambda
+	Testing the AWS Lambda functions
+	...
+
+Api Gateway
+	
+	$ etc/test-api.sh --profile=jayway-devops-ulrik --prefix=ulsa --api-id=5ikia5f4v9 --	stage=ulsa_rps --test=api
+
+	Testing the Amazon API Gateway API; URL is: https://5ikia5f4v9.execute-api.eu-west-1.amazonaws.com/ulsa_rps/games
+	Result files will be located in /var/folders/gc/0skht0rj5nv53jzc5srk0ng80000gn/T/serverless-rps.Lw1V9oQ8
+
+	Testing create game...
+	Player1 (daphne@example.com) created game 5bccdbbb-b5a9-4244-9d6b-7f24d424e9ed
+
+	Testing join game...
+	Player2 (scooby@example.com) joined game 5bccdbbb-b5a9-4244-9d6b-7f24d424e9ed
+
+	Testing make move...
+	Player1 (daphne@example.com) played: paper
+	Player2 (scooby@example.com) played: scissors
+	The winner is: scooby@example.com
+
+	Testing get game...
+	The game 5bccdbbb-b5a9-4244-9d6b-7f24d424e9ed looks fine
+
+	Testing get games (with state=ended)...
+	Warning: status code was 504 (Gateway Timeout), retrying...
+	There are 6 games in state ended
+
+	Tests are done
 
 ## Where to go from here
 If you still want to code, here are some ideas.
