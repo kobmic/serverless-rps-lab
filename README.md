@@ -165,7 +165,9 @@ Json in:
 Json out:
 
 	{
-  		"gameId": "a7f7615c-c385-457c-93a5-1267dfe8787e"
+  		"gameId": "a7f7615c-c385-457c-93a5-1267dfe8787e",
+  		"state": "created",
+  		"player1": "mike@gmail.com"
 	}
 
 * reuse your API Gateway from above, or create a new one, as before you'll need a **games** resource with method **POST** that will use your lambda function **createGame**

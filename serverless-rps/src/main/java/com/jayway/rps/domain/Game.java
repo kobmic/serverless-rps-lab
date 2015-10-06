@@ -69,6 +69,11 @@ public class Game {
         this.player2Move = player2Move;
     }
 
+    public boolean player2HasMoved() { return  (player2Move != null); };
+    public boolean player1HasMoved() { return  (player1Move != null); };
+    public boolean hasNoMoves() { return  (player1Move == null) && (player2Move == null); };
+
+
     public void updateWinner() {
         if ((player1Move != null) && (this.player2Move != null)) {
             if (Move.valueOf(player1Move).defeats(Move.valueOf(player2Move))) {

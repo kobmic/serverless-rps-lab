@@ -43,27 +43,41 @@ public class GameStore {
     public static Game createGame(String gameId, String player1) {
 
         Table table = GameStore.createConnectionAndGetTable();
+        String createdState = "created";
 
         Item item = new Item()
                 .withPrimaryKey("gameId", gameId)
-                .withString("state", "created")
+                .withString("state", createdState)
                 .withString("player1", player1);
 
         // Write the item to the table
+        // putItemOutcome.getItem() might be null
         table.putItem(item);
+
         Game game = new Game();
         game.setGameId(gameId);
+        game.setState(createdState);
+        game.setPlayer1(player1);
         return game;
     }
 
     /**
-     * Player2 joins game.
+     * Player2 joins game. Idempotent for player2.
      * @param gameId
      * @param player2
      */
     public static Game joinGame(String gameId, String player2) {
 
         Table table = GameStore.createConnectionAndGetTable();
+
+        Game currentGame = GameStore.getGame(gameId);
+        if (!"created".equals(currentGame.getState())) {
+            if (player2.equals(currentGame.getPlayer2())) {
+                return currentGame;
+            } else {
+                throw new RuntimeException("Game already started. Could not join game.");
+            }
+        }
 
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                 .withPrimaryKey("gameId", gameId)
@@ -94,21 +108,24 @@ public class GameStore {
             return currentGame;
         }
 
-        if (move.getEmail().equals(currentGame.getPlayer1())) {
-            if ((currentGame.getPlayer1Move() == null) && (currentGame.getPlayer2Move() == null)) {
+        boolean player1Moves = move.getEmail().equals(currentGame.getPlayer1());
+        boolean player2Moves = move.getEmail().equals(currentGame.getPlayer2());
+
+        if (player1Moves) {
+            if (currentGame.hasNoMoves()) {
+                fieldToUpdate = "player1Move";
                 newState = "waiting";
+            } else if (currentGame.player2HasMoved()) {
                 fieldToUpdate = "player1Move";
-            } else if ((currentGame.getPlayer2Move() != null)) {
                 newState = "ended";
-                fieldToUpdate = "player1Move";
             }
-        } else if (move.getEmail().equals(currentGame.getPlayer2())) {
-            if ((currentGame.getPlayer1Move() == null) && (currentGame.getPlayer2Move() == null)) {
+        } else if (player2Moves) {
+            if (currentGame.hasNoMoves()) {
+                fieldToUpdate = "player2Move";
                 newState = "waiting";
+            } else if ((currentGame.player1HasMoved())) {
                 fieldToUpdate = "player2Move";
-            } else if ((currentGame.getPlayer1Move() != null)) {
                 newState = "ended";
-                fieldToUpdate = "player2Move";
             }
         }
 
