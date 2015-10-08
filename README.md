@@ -400,4 +400,5 @@ Upload player image to s3, write a lambda function that listens to **s3:ObjectCr
 ### Use API Gateway as Service Proxy to DynamoDB 
 Instead of using AWS Lambda, try to use API Gateway as service proxy to DynamoDB. Check [Making HTTP Requests to DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/MakingHTTPRequests.html) and [Walkthrough: API Gateway and an AWS Service Proxy](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-aws-proxy.html)
  
-
+### Slap a web app frontend onto it
+Implement a web app frontend. This requires [CORS support](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)
