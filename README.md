@@ -195,7 +195,8 @@ Json out:
 		"player2Move": "rock",
 		"winner": "tie""
 	}	
-	
+
+* add a new resource **gameid** under the **games** resource. Path should be **{gameid}**	
 * add method **GET** to resource **games/{gameid}** 
 * add a mapping to map the path parameter {gameid} to Json
 	* in resource view select your new **GET** method
