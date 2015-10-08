@@ -201,7 +201,7 @@ Json out:
 	* in resource view select your new **GET** method
 	* choose integration request
 	* add mapping template 'application/json' 
-	* add template: <code>{ "gameId" : "$input.params('gameid')" } </code>
+	* add template (change from "Input passthrough"): <code>{ "gameId" : "$input.params('gameid')" } </code>
 	
 
 ### Join Game
