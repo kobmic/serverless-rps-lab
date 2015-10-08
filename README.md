@@ -62,7 +62,7 @@ To learn more about function handlers see [docs.](http://docs.aws.amazon.com/lam
 * Event invocation type:  asynchronous, used with event sources such as Amazon S3, Amazon Kinesis, and Amazon SNS
 
 ### Create a deployment package	
-Now you package and upload your code to create your Lambda function. You will specify the **com.jayway.lab.HelloLambda::helloWorld** method reference as the handler.Your deployment package can be a **.zip** file or a standalone **.jar**. The gradle project contains a task for creating a zip:
+Now you package and upload your code to create your Lambda function. You will specify the **com.jayway.rps.HelloLambda::helloWorld** method reference as the handler.Your deployment package can be a **.zip** file or a standalone **.jar**. The gradle project contains a task for creating a zip:
 
 	gradle buildZip
 
