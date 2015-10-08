@@ -14,7 +14,8 @@ Use repository
 If you get stuck you can check the branch **solution**.	
 	
 ## 0. Naming
-When doing this lab in teams, to avoid name conflicts choose a team name and use it when naming lambda functions etc, i.e. "awesomeTeam-helloWorld" instead of "helloWorld" 
+When doing this lab in teams, to avoid name conflicts choose a team name and use it when naming lambda functions etc, i.e. "awesomeTeam-helloWorld" instead of "helloWorld".
+In orer to use the automatic test script described below also make sure that you follow a naming convention for all of your lambda methods. Use a prefix, such as "awesomeTeam-" and then name your methods such as "awesomeTeam-getGames", "awesomeTeam-makeMove" and so on.
 
 ## 1. Hello AWS Lambda
 You can skip this step if you're already familiar with AWS lamba. In this step you will use a simple Java handler to create a Lambda function.
