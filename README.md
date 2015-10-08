@@ -300,6 +300,7 @@ Json out:
 
 * add method **GET** to resource **games**
 * use a query parameter *state* to query games by state, i.e. <code>/games?state=ended</code>
+* add the query parameter in "Method request" step
 
 Mapping for query parameter *state*:
 	
