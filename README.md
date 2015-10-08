@@ -138,7 +138,7 @@ Test your endpoint with curl, i.e.
 	 
 ## 4. Serverless Rock-Paper-Scissors
 
-In this step you will implement the rock-paper-scissors game using API Gateway & Lambda functions. You will use Amazon Dynamo DB to store your data in table **rpslab-games** in region **eu-west1**. Make sure to add permissions to the execution role you used for your lambda function, i.e.
+In this step you will implement the rock-paper-scissors game using API Gateway & Lambda functions. You will use Amazon Dynamo DB to store your data in table **rpslab-games** in region **eu-west1**. Specify a hash key on **gameId**. Make sure to add permissions to the execution role you used for your lambda function, i.e.
 
 	{
     	"Effect": "Allow",
