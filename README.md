@@ -91,7 +91,7 @@ Write a new lambda function **createGame** that consumes and produces JSON. Uplo
 
 example JSON in:
 	
-	{"name": "Player1", email: "player1@gmail.com" }
+	{"name": "Player1", "email": "player1@gmail.com" }
 
 example JSON out:	
 
