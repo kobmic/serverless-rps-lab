@@ -1,40 +1,26 @@
 (ns serverless-rps-clj.core
   (:require [clojure.data.json :as json]
-            [clojure.string :as s]
             [clojure.java.io :as io]
             [serverless-rps-clj.game-store :as game-store]))
 
-(defn key->keyword [key-string]
-  (-> key-string
-    (s/replace #"([a-z])([A-Z])" "$1-$2")
-    (s/replace #"([A-Z]+)([A-Z])" "$1-$2")
-    (s/lower-case)
-    (keyword)))
-
-;; reads JSON, executes f, writes JSON
-(defn handleRequest [this is os context f]
-  (let [w (io/writer os)]
-    (-> (json/read (io/reader is) :key-fn key->keyword)
-      (f)
-      (json/write w))
-    (.flush w)))
-
 ;; convenience macro for generating gen-class and handleRequest
-
 (defmacro deflambda [name args & body]
   (let [class-name (->> (clojure.string/split (str name) #"-")
                      (mapcat clojure.string/capitalize)
-                     (apply str))]
+                     (apply str))
+        fn-name (symbol (str "handle-" name "-event"))]
     `(do (gen-class
            :name ~(symbol class-name)
            :prefix ~(symbol (str class-name "-"))
            :implements [com.amazonaws.services.lambda.runtime.RequestStreamHandler])
 
-         (defn ~(symbol (str "handle-" name "-event")) ~args
-           ~@body)
-         
-         (defn ~(symbol (str class-name "-handleRequest")) ~'[this is os context]
-           (handleRequest ~'this ~'is ~'os ~'context ~(symbol (str "handle-" name "-event")))))))
+         (defn ~(symbol (str class-name "-handleRequest")) [this# is# os# context#]
+           (let [~fn-name (fn ~args ~@body)
+                 w# (io/writer os#)]
+             (-> (json/read (io/reader is#) :key-fn keyword)
+               (~fn-name)
+               (json/write w#))
+             (.flush w#))))))
 
 ;; Create Game
 
@@ -44,7 +30,7 @@
 ;; Get Game
 
 (deflambda get-game [event]
-  (game-store/get-game (:game-id event)))
+  (game-store/get-game (:gameId event)))
 
 ;; Get Games
 
@@ -53,10 +39,10 @@
 
 ;; Join Game
 
-(deflambda join-game [{:keys [game-id email] :as event}]
-  (game-store/join-game game-id email))
+(deflambda join-game [{:keys [gameId email] :as event}]
+  (game-store/join-game gameId email))
 
 ;; Make Move
 
-(deflambda make-move [{:keys [game-id email move] :as event}]
-  (game-store/make-move game-id email move))
+(deflambda make-move [{:keys [gameId email move] :as event}]
+  (game-store/make-move gameId email move))
